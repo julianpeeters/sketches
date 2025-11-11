@@ -1,2 +1,3 @@
+pub mod function;
+pub mod relation;
 pub mod set;
-pub mod tetration;

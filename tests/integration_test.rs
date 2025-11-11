@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 
 use sketches::{
-  set::Two, tetration::Tetration
+  function::Tetration,
+  relation::{Closure, Relation},
+  set::Two,
 };
 
 #[test]
@@ -22,5 +24,12 @@ fn test_public_api() {
   d.insert(&Two::_2, &Two::_2);
   d.insert(&Two::_1, &Two::_2);
   assert_eq!(Two::VALUES.tetrate(), vec!(a, b, c, d));
+
+  let mut e: Relation<&Two, &Two> = Relation::new();
+  let mut f: Relation<&Two, &Two> = Relation::new();
+  e.insert((&Two::_1, &Two::_2));
+  f.insert((&Two::_1, &Two::_2));
+  f.insert((&Two::_1, &Two::_1));
+  assert_eq!(e.reflexive(), f);
 
 }
