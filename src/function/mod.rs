@@ -2,15 +2,17 @@ use crate::set::{Zero, One, Two, Three, Four, Five};
 use itertools::Itertools;
 use std::collections::HashMap;
 
+pub type Function<A, B> = HashMap<A, B>;
+
 pub trait Tetration<A> {
-  fn tetrate(&self) -> Vec<HashMap<&A, &A>>;
+  fn tetrate(&self) -> Vec<Function<&A, &A>>;
 }
 
 impl Tetration<Zero> for [&Zero; 0] {
-  fn tetrate(&self) -> Vec<HashMap<&Zero, &Zero>> {
+  fn tetrate(&self) -> Vec<Function<&Zero, &Zero>> {
     self.iter()
         .map(|_| {
-          let functions = HashMap::new();
+          let functions = Function::new();
           functions
         })
         .collect_vec()
@@ -18,10 +20,10 @@ impl Tetration<Zero> for [&Zero; 0] {
 }
 
 impl Tetration<One> for [&One; 1] {
-  fn tetrate(&self) -> Vec<HashMap<&One, &One>> {
+  fn tetrate(&self) -> Vec<Function<&One, &One>> {
     self.iter()
         .map(|p| {
-          let mut functions = HashMap::new();
+          let mut functions = Function::new();
           functions.insert(&One::_1, *p);
           functions
         })
@@ -30,10 +32,10 @@ impl Tetration<One> for [&One; 1] {
 }
 
 impl Tetration<Two> for [&Two; 2] {
-  fn tetrate(&self) -> Vec<HashMap<&Two, &Two>> {
+  fn tetrate(&self) -> Vec<Function<&Two, &Two>> {
     self.iter().cartesian_product(self)
         .map(|p| {
-          let mut functions = HashMap::new();
+          let mut functions = Function::new();
           functions.insert(&Two::_1, *p.0);
           functions.insert(&Two::_2, *p.1);
           functions
@@ -43,10 +45,10 @@ impl Tetration<Two> for [&Two; 2] {
 }
 
 impl Tetration<Three> for [&Three; 3] {
-  fn tetrate(&self) -> Vec<HashMap<&Three, &Three>> {
+  fn tetrate(&self) -> Vec<Function<&Three, &Three>> {
     self.iter().cartesian_product(self).cartesian_product(self)
         .map(|p| {
-          let mut functions = HashMap::new();
+          let mut functions = Function::new();
           functions.insert(&Three::_1, *p.0.0);
           functions.insert(&Three::_2, *p.0.1);
           functions.insert(&Three::_3, *p.1);
@@ -57,10 +59,10 @@ impl Tetration<Three> for [&Three; 3] {
 }
 
 impl Tetration<Four> for [&Four; 4] {
-  fn tetrate(&self) -> Vec<HashMap<&Four, &Four>> {
+  fn tetrate(&self) -> Vec<Function<&Four, &Four>> {
     self.iter().cartesian_product(self).cartesian_product(self).cartesian_product(self)
         .map(|p| {
-          let mut functions = HashMap::new();
+          let mut functions = Function::new();
           functions.insert(&Four::_1, *p.0.0.0);
           functions.insert(&Four::_2, *p.0.0.1);
           functions.insert(&Four::_3, *p.0.1);
@@ -72,10 +74,10 @@ impl Tetration<Four> for [&Four; 4] {
 }
 
 impl Tetration<Five> for [&Five; 5] {
-  fn tetrate(&self) -> Vec<HashMap<&Five, &Five>> {
+  fn tetrate(&self) -> Vec<Function<&Five, &Five>> {
     self.iter().cartesian_product(self).cartesian_product(self).cartesian_product(self).cartesian_product(self)
         .map(|p| {
-          let mut functions = HashMap::new();
+          let mut functions = Function::new();
           functions.insert(&Five::_1, *p.0.0.0.0);
           functions.insert(&Five::_2, *p.0.0.0.1);
           functions.insert(&Five::_3, *p.0.0.1);
