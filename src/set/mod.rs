@@ -1,5 +1,3 @@
-use crate::relation::Part;
-
 #[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Zero {}
 impl Zero {
