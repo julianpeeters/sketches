@@ -2,8 +2,8 @@ use std::collections::HashSet;
 
 use sketches::{
   function::Tetration,
-  relation::{Closure, Partition, Relation},
-  set::{Zero, One, Two, Three, Four, Five},
+  relation::{Closure, Relation},
+  set::{Five, Four, One, Three, Two, Zero, partition::Partition},
 };
 
 #[test]

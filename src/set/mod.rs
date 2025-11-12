@@ -1,3 +1,5 @@
+pub mod partition;
+
 #[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Zero {}
 impl Zero {

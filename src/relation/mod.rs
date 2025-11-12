@@ -1,12 +1,10 @@
-use crate::function::Tetration;
-use crate::set::{Zero, One, Two, Three, Four, Five};
 use itertools::Itertools;
 use std::collections::HashSet;
 use std::hash::Hash;
 
 pub type Relation<A, B> = HashSet<(A, B)>;
 
-pub type Part<A> = Vec<Relation<A, A>>;
+pub type EquivalenceClass<A> = Vec<Relation<A, A>>;
 
 pub trait Closure<A> {
   fn equivalence(&self) -> Relation<A, A>;
@@ -16,12 +14,8 @@ pub trait Closure<A> {
 }
 
 pub trait Equivalence<A> {
-  fn equivalents_by<F>(&self, f: F) -> Vec<Part<A>>
+  fn equivalents_by<F>(&self, f: F) -> Vec<EquivalenceClass<A>>
   where F: Fn(&Relation<A, A>) -> Relation<A, A>;
-}
-
-pub trait Partition<A> {
-  fn partition(&self) -> Vec<Part<&A>>;
 }
 
 impl<A : Clone + Copy + Eq + Hash> Closure<A> for Relation<A, A> {
@@ -63,10 +57,10 @@ impl<A : Clone + Copy + Eq + Hash> Closure<A> for Relation<A, A> {
 
 impl<A : Copy + Eq + Hash> Equivalence<A> for Vec<Relation<A, A>> {
 
-  fn equivalents_by<F>(&self, f: F) -> Vec<Part<A>>
+  fn equivalents_by<F>(&self, f: F) -> Vec<EquivalenceClass<A>>
   where F: Fn(&Relation<A, A>) -> Relation<A, A> {
 
-    fn test<F, A : Copy + Eq + Hash>(f: F, it: &Part<A>, query: &Relation<A, A>, mut acc: Vec<Part<A>>) -> Vec<Part<A>>
+    fn test<F, A : Copy + Eq + Hash>(f: F, it: &EquivalenceClass<A>, query: &Relation<A, A>, mut acc: Vec<EquivalenceClass<A>>) -> Vec<EquivalenceClass<A>>
     where F : Fn(&Relation<A, A>) -> Relation<A, A> {
 
       fn get_connections<A : Copy + Eq + Hash>(map: &Relation<A, A>) -> Relation<A, A> {
@@ -95,40 +89,4 @@ impl<A : Copy + Eq + Hash> Equivalence<A> for Vec<Relation<A, A>> {
 
   }
   
-}
-
-impl Partition<Zero> for [&Zero; 0]{
-  fn partition(&self) -> Vec<Part<&Zero>> {
-    vec!()
-  }
-}
-
-impl Partition<One> for [&One; 1]{
-  fn partition(&self) -> Vec<Part<&One>> {
-    self.tetrate().equivalents_by(|x| x.equivalence())
-  }
-}
-
-impl Partition<Two> for [&Two; 2]{
-  fn partition(&self) -> Vec<Part<&Two>> {
-    self.tetrate().equivalents_by(|x| x.equivalence())
-  }
-}
-
-impl Partition<Three> for [&Three; 3]{
-  fn partition(&self) -> Vec<Part<&Three>> {
-    self.tetrate().equivalents_by(|x| x.equivalence())
-  }
-}
-
-impl Partition<Four> for [&Four; 4]{
-  fn partition(&self) -> Vec<Part<&Four>> {
-    self.tetrate().equivalents_by(|x| x.equivalence())
-  }
-}
-
-impl Partition<Five> for [&Five; 5]{
-  fn partition(&self) -> Vec<Part<&Five>> {
-    self.tetrate().equivalents_by(|x| x.equivalence())
-  }
 }
