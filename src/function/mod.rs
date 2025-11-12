@@ -1,4 +1,4 @@
-use crate::set::{Zero, One, Two, Three, Four, Five};
+use crate::set::{Five, Four, One, Three, Two, Zero};
 use itertools::Itertools;
 use std::collections::HashSet;
 

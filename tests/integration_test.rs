@@ -2,8 +2,8 @@ use std::collections::HashSet;
 
 use sketches::{
   function::Tetration,
-  relation::{Closure, Relation},
-  set::Two,
+  relation::{Closure, Partition, Relation},
+  set::{Zero, One, Two, Three, Four, Five},
 };
 
 #[test]
@@ -26,6 +26,23 @@ fn test_public_api() {
   e.insert((&Two::_1, &Two::_2));
   f.insert((&Two::_1, &Two::_2));
   f.insert((&Two::_1, &Two::_1));
-  assert_eq!(e.reflexive(), f);
+  assert_eq!(e.reflexivity(), f);
+  
+  let mut g: HashSet<(&One, &One)> = HashSet::new();
+  let mut h: HashSet<(&Two, &Two)> = HashSet::new();
+  let mut i: HashSet<(&Two, &Two)> = HashSet::new();
+  let mut j: HashSet<(&Two, &Two)> = HashSet::new();
+  let mut k: HashSet<(&Two, &Two)> = HashSet::new();
+  g.insert((&One::_1, &One::_1));
+  h.insert((&Two::_1, &Two::_1)); h.insert((&Two::_2, &Two::_1));
+  i.insert((&Two::_1, &Two::_1)); i.insert((&Two::_2, &Two::_2));
+  j.insert((&Two::_1, &Two::_2)); j.insert((&Two::_2, &Two::_1));
+  k.insert((&Two::_1, &Two::_2)); k.insert((&Two::_2, &Two::_2));
+  assert_eq!(Zero::VALUES.partition(), vec!() as Vec<Vec<HashSet<(&Zero, &Zero)>>>);
+  assert_eq!(One::VALUES.partition(), vec!(vec!(g)));
+  assert_eq!(Two::VALUES.partition(), vec!(vec!(h, j, k), vec!(i)));
+  assert_eq!(Three::VALUES.partition().len(), 5);
+  assert_eq!(Four::VALUES.partition().len(), 15);
+  assert_eq!(Five::VALUES.partition().len(), 52);
 
 }
