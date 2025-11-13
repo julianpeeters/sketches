@@ -4,7 +4,7 @@ use crate::{
   set::{Five, Four, One, Three, Two, Zero}
 };
 
-type Part<A> = EquivalenceClass<A>;
+pub type Part<A> = EquivalenceClass<A>;
 
 pub trait Partition<A> {
   fn partition(&self) -> Vec<Part<&A>>;

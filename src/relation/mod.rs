@@ -1,10 +1,10 @@
-use itertools::Itertools;
+use nonempty::NonEmpty;
 use std::collections::HashSet;
 use std::hash::Hash;
 
 pub type Relation<A, B> = HashSet<(A, B)>;
 
-pub type EquivalenceClass<A> = Vec<Relation<A, A>>;
+pub type EquivalenceClass<A> = NonEmpty<Relation<A, A>>;
 
 pub trait Closure<A> {
   fn equivalence(&self) -> Relation<A, A>;
@@ -14,6 +14,7 @@ pub trait Closure<A> {
 }
 
 pub trait Equivalence<A> {
+  fn get_connections(map: &Relation<A, A>) -> Relation<A, A>;
   fn equivalents_by<F>(&self, f: F) -> Vec<EquivalenceClass<A>>
   where F: Fn(&Relation<A, A>) -> Relation<A, A>;
 }
@@ -23,6 +24,7 @@ impl<A : Clone + Copy + Eq + Hash> Closure<A> for Relation<A, A> {
     self.reflexivity()
         .symmetry()
         .transitivity()
+        .symmetry()
   }
   fn reflexivity(&self) -> Relation<A, A> {
     let mut new = self.clone();
@@ -55,38 +57,30 @@ impl<A : Clone + Copy + Eq + Hash> Closure<A> for Relation<A, A> {
   }
 }
 
-impl<A : Copy + Eq + Hash> Equivalence<A> for Vec<Relation<A, A>> {
+impl<A : Copy + Eq + Hash> Equivalence<A> for NonEmpty<Relation<A, A>> {
+
+  fn get_connections(map: &Relation<A, A>) -> Relation<A, A> {
+      map.iter().fold(HashSet::new(), |mut acc, e| {
+        if e.0 == e.1 {
+          acc
+        } else {
+          acc.insert((e.0, e.1));
+          acc
+        }
+      })
+    }
 
   fn equivalents_by<F>(&self, f: F) -> Vec<EquivalenceClass<A>>
   where F: Fn(&Relation<A, A>) -> Relation<A, A> {
-
-    fn test<F, A : Copy + Eq + Hash>(f: F, it: &EquivalenceClass<A>, query: &Relation<A, A>, mut acc: Vec<EquivalenceClass<A>>) -> Vec<EquivalenceClass<A>>
-    where F : Fn(&Relation<A, A>) -> Relation<A, A> {
-
-      fn get_connections<A : Copy + Eq + Hash>(map: &Relation<A, A>) -> Relation<A, A> {
-        map.iter().fold(HashSet::new(), |mut acc, e| {
-          if e.0 == e.1 {
-            acc
-          } else {
-            acc.insert((e.0, e.1));
-            acc
-          }
-        })
-      }
-      let pp: (Vec<&Relation<A, A>>, Vec<&Relation<A, A>>) = 
-        it.iter().partition(|&candidate| {
-          f(&get_connections(query)) == f(&get_connections(candidate))
-        });
-      acc.push(pp.0.iter().map(|x| (*x).clone()).collect());
-      acc.append(&mut pp.1.iter().map(|x| (*x).clone()).collect_vec().equivalents_by(f));
-      acc
-    }
-
-    match self.first() {
-      Some(query) => test(f, self, query, Vec::new()),
-      None => Vec::new(),
-    }
-
+    let mut acc: Vec<NonEmpty<Relation<A, A>>> = Vec::new();
+    let query_connections: Relation<A, A> = f(&Self::get_connections(self.first()));
+    let pp: (Vec<&Relation<A, A>>, Vec<&Relation<A, A>>) = 
+      self.iter().partition(|&candidate| {
+        query_connections == f(&Self::get_connections(candidate))
+      });
+    let _ = NonEmpty::from_vec(pp.0.into_iter().cloned().collect()).map_or((), |x| acc.push(x));
+    let _ = NonEmpty::from_vec(pp.1.into_iter().cloned().collect()).map_or((), |x| acc.append(&mut x.equivalents_by(f)));
+    acc
   }
   
 }

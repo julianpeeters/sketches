@@ -1,7 +1,8 @@
+use nonempty::{NonEmpty, nonempty};
 use std::collections::HashSet;
-
 use sketches::{
   function::Tetration,
+  order::Join,
   relation::{Closure, Relation},
   set::{Five, Four, One, Three, Two, Zero, partition::Partition},
 };
@@ -9,7 +10,7 @@ use sketches::{
 #[test]
 fn test_public_api() {
 
-  assert_eq!(Two::VALUES, [&Two::_1, &Two::_2]);
+  assert_eq!(Two::SET, [&Two::_1, &Two::_2]);
 
   let mut a: HashSet<(&Two, &Two)> = HashSet::new();
   let mut b: HashSet<(&Two, &Two)> = HashSet::new();
@@ -19,7 +20,7 @@ fn test_public_api() {
   b.insert((&Two::_1, &Two::_1)); b.insert((&Two::_2, &Two::_2));
   c.insert((&Two::_1, &Two::_2)); c.insert((&Two::_2, &Two::_1));
   d.insert((&Two::_1, &Two::_2)); d.insert((&Two::_2, &Two::_2));
-  assert_eq!(Two::VALUES.tetrate(), vec!(a, b, c, d));
+  assert_eq!(Two::SET.tetrate(), nonempty![a, b, c, d]);
 
   let mut e: Relation<&Two, &Two> = Relation::new();
   let mut f: Relation<&Two, &Two> = Relation::new();
@@ -38,11 +39,21 @@ fn test_public_api() {
   i.insert((&Two::_1, &Two::_1)); i.insert((&Two::_2, &Two::_2));
   j.insert((&Two::_1, &Two::_2)); j.insert((&Two::_2, &Two::_1));
   k.insert((&Two::_1, &Two::_2)); k.insert((&Two::_2, &Two::_2));
-  assert_eq!(Zero::VALUES.partition(), vec!() as Vec<Vec<HashSet<(&Zero, &Zero)>>>);
-  assert_eq!(One::VALUES.partition(), vec!(vec!(g)));
-  assert_eq!(Two::VALUES.partition(), vec!(vec!(h, j, k), vec!(i)));
-  assert_eq!(Three::VALUES.partition().len(), 5);
-  assert_eq!(Four::VALUES.partition().len(), 15);
-  assert_eq!(Five::VALUES.partition().len(), 52);
+  assert_eq!(Zero::SET.partition(), vec!() as Vec<NonEmpty<HashSet<(&Zero, &Zero)>>>);
+  assert_eq!(One::SET.partition(), vec!(nonempty![g]));
+  assert_eq!(Two::SET.partition(), vec!(nonempty!(h, j, k), nonempty!(i)));
+  assert_eq!(Three::SET.partition().len(), 5);
+  assert_eq!(Four::SET.partition().len(), 15);
+  assert_eq!(Five::SET.partition().len(), 52);
+
+  let mut l: HashSet<(&Two, &Two)> = HashSet::new();
+  let mut m: HashSet<(&Two, &Two)> = HashSet::new();
+  let mut n: HashSet<(&Two, &Two)> = HashSet::new();
+  let mut o: HashSet<(&Two, &Two)> = HashSet::new();
+  l.insert((&Two::_1, &Two::_1)); l.insert((&Two::_2, &Two::_1));
+  m.insert((&Two::_1, &Two::_1)); m.insert((&Two::_2, &Two::_2));
+  n.insert((&Two::_1, &Two::_2)); n.insert((&Two::_2, &Two::_1));
+  o.insert((&Two::_1, &Two::_2)); o.insert((&Two::_2, &Two::_2));
+  assert_eq!(nonempty!(l.clone(), n.clone(), o.clone()).join(&nonempty!(m)), nonempty!(l, n, o));
 
 }
