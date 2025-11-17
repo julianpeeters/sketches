@@ -24,9 +24,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9737e026353e5cd0736f98eddae28665118eb6f6600902a7f50db585621fecb6"
 
 [[package]]
+name = "poset"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3c1f069572a5f4cf31aad745ac24b79d9fcb747d72db9f9e1a8e1b4f7b747dad"
+
+[[package]]
 name = "sketches"
 version = "0.1.0"
 dependencies = [
  "itertools",
  "nonempty",
+ "poset",
 ]

@@ -1,9 +1,16 @@
 use crate::{
   relation::{Closure, Equivalence},
   set::{Zero, One, Two, Three, Four, Five,
-  partition::{Part, Partition}}
-};
+    partition::{Part, Partition}}
+  };
 use std::collections::HashSet;
+use std::hash::Hash;
+
+pub fn le<'a, A : Eq + Hash>(a: &Part<&A>, b: &Part<&A>) -> bool {
+  let connection_set_a = Part::<&A>::get_connections(a.first()).equivalence();
+  let connection_set_b = Part::<&A>::get_connections(b.first()).equivalence();
+  connection_set_a.is_subset(&connection_set_b)
+}
 
 pub trait Join<A> {
   fn join(&self, a: &A) -> A;
@@ -11,8 +18,8 @@ pub trait Join<A> {
 
 impl<'a> Join<Part<&'a Zero>> for Part<&'a Zero> {
   fn join(&self, _: &Part<&'a Zero>) -> Part<&'a Zero> {
-      self.clone()
-    }
+    self.clone()
+  }
 }
 
 impl<'a> Join<Part<&'a One>> for Part<&'a One> {

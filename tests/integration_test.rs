@@ -2,7 +2,7 @@ use nonempty::{NonEmpty, nonempty};
 use std::collections::HashSet;
 use sketches::{
   function::Tetration,
-  order::Join,
+  order::{Join, le},
   relation::{Closure, Relation},
   set::{Five, Four, One, Three, Two, Zero, partition::Partition},
 };
@@ -55,5 +55,15 @@ fn test_public_api() {
   n.insert((&Two::_1, &Two::_2)); n.insert((&Two::_2, &Two::_1));
   o.insert((&Two::_1, &Two::_2)); o.insert((&Two::_2, &Two::_2));
   assert_eq!(nonempty!(l.clone(), n.clone(), o.clone()).join(&nonempty!(m)), nonempty!(l, n, o));
+
+  let mut p: HashSet<(&Two, &Two)> = HashSet::new();
+  let mut q: HashSet<(&Two, &Two)> = HashSet::new();
+  let mut r: HashSet<(&Two, &Two)> = HashSet::new();
+  let mut s: HashSet<(&Two, &Two)> = HashSet::new();
+  p.insert((&Two::_1, &Two::_1)); p.insert((&Two::_2, &Two::_1));
+  q.insert((&Two::_1, &Two::_1)); q.insert((&Two::_2, &Two::_2));
+  r.insert((&Two::_1, &Two::_2)); r.insert((&Two::_2, &Two::_1));
+  s.insert((&Two::_1, &Two::_2)); s.insert((&Two::_2, &Two::_2));
+  assert_eq!(le(&nonempty!(q), &nonempty!(p, r, s)), true);
 
 }
